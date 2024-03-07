@@ -7,28 +7,30 @@ This is a usage guide of the Z500(C50) POS SDK, the implementation was written i
 The Native Java Modules were targeted to a React Native setup but its not too far from flutter Method/Event Channels:
 
 - NfcModule:
-  - The POS needs to be explicitly set to read a specifcic type of card, so unfourtunately the Android NFC Library does not work.
-  - According to the manual, the standard of the justtap cards is compatible with Mifare Ultralight which is included in the Module.
-  - It starts a thread to handle the reading cards and sends a simple auth to decode the value inside.
+  - The POS needs to be **explicitly set to read a specifcic type of card**, so unfourtunately the Android NFC Library does not work.
+  - According to the manual, the standard of the Justtap cards are only compatible with **Mifare Ultralight** which is included in the module.
+  - It starts a thread that handles the card reader and sends a simple auth to decode the value inside once a card is tapped.
 - PrinterModule
-  - The printer module also relies on a non standard printer and is also specific to the POS.
-  - Its quite useful since you can use an EventChannel to check the printing status.
-  - There are some Helpers to also assist with error codes `PosApiHelper`
+  - The printer module also relies on a non-standard printer and is also specific to the POS.
+  - Its quite useful since you can use an `EventChannel` to check the printing status.
+  - There are some hadny helpers for the SDK to also assist with error codes in `PosApiHelper.java`
 - CardModule:
   - Just a simple EMV Card Reader (Visa, MasterCard, etc).
 
-I'll demonstrate how I used the modules in react native. This will give you good idea on how the SDK works
+I'll demonstrate how I used the modules in **React Native**. This will give you good idea on how the SDK works.
 
 ## NFC Reader Module Usage `NfcModule.java`
 
 This is what the application is doing:
 
-1. The NFC Module is fetched from the available modules in the android package.
-2. A useCallback hook is called to invoke the `readNfcCard` function every 200ms.
+1. The `NfcModule` is fetched from the available modules in the android package.
+2. A `useCallback` hook is called to invoke the `readNfcCard` function every 200ms.
 3. An event listener is created to listen to event data sent from `NfcModule.java`
-4. The value returned is in hex format so a utility function `hexToAscii` gives us a more readable string
+4. The value returned is in hex format, so the utility function, `hexToAscii` converts it to **ASCII** and provides us a more readable string
 
-Note: - You'll need to create a Event Channel for the Flutter implementation since a thread is created to handle the reading - You may need to also have a provision to kill the thread when the screen is out of the view (`NfcModule.stopThread();`)
+##### Note: 
+  - You'll need to create a Event Channel for the Flutter implementation since a thread is created to handle the reading 
+  - Creating a provision to kill the thread when the screen is out of the view (`NfcModule.stopThread();`), will prevent the reader from hanging
 
 ```js
 
